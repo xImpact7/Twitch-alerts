@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Clean Twitch Alerts</title>
+<meta name="viewport" content="width=1920, height=1080">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+
+<style>
+html, body {
+    margin: 0;
+    width: 1920px;
+    height: 1080px;
+    background: transparent;
+    overflow: hidden;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+#alert {
+    position: absolute;
+    left: 50%;
+    top: 68%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    opacity: 0;
+}
+
+.line {
+    width: 260px;
+    height: 3px;
+    background: linear-gradient(90deg, #6a5cff, #2ecbff);
+    margin: 0 auto 18px;
+    border-radius: 4px;
+}
+
+.type {
+    font-size: 26px;
+    letter-spacing: 2px;
+    color: #2ecbff;
+    margin-bottom: 6px;
+}
+
+.user {
+    font-size: 46px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.message {
+    font-size: 22px;
+    margin-top: 6px;
+    color: #aab0ff;
+}
+</style>
+</head>
+
+<body>
+
+<div id="alert">
+    <div class="line"></div>
+    <div class="type" id="type"></div>
+    <div class="user" id="user"></div>
+    <div class="message" id="message"></div>
+</div>
+
+<script>
+const alertBox = document.getElementById("alert");
+
+function showAlert(type, user, message) {
+    document.getElementById("type").innerText = type;
+    document.getElementById("user").innerText = user;
+    document.getElementById("message").innerText = message;
+
+    gsap.timeline()
+        .set(alertBox, {opacity: 1, y: 30})
+        .to(alertBox, {y: 0, duration: 0.4, ease: "power2.out"})
+        .to(alertBox, {opacity: 1, duration: 3})
+        .to(alertBox, {opacity: 0, y: -20, duration: 0.4});
+}
+
+//  StreamElements Events
+window.addEventListener("onEventReceived", function (obj) {
+    const data = obj.detail.event;
+    const listener = obj.detail.listener;
+
+    if (listener === "follower") {
+        showAlert(
+            "NEUER FOLLOW",
+            data.name,
+            "Willkommen im Stream "
+        );
+    }
+
+    if (listener === "subscriber") {
+        showAlert(
+            "NEUER SUB",
+            data.name,
+            "ist nun Teil der Gang "
+        );
+    }
+
+    if (listener === "cheer") {
+        showAlert(
+            "BITS",
+            data.name,
+            "Danke für die Bits!"
+        );
+    }
+
+    if (listener === "tip") {
+        showAlert(
+            "SPENDE",
+            data.name,
+            "Vielen Dank für den Support!"
+        );
+    }
+
+    if (listener === "raid") {
+        showAlert(
+            "RAID",
+            data.name,
+            "Willkommen im Stream – viel Spaß!"
+        );
+    }
+});
+</script>
+
+</body>
+</html>
